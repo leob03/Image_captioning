@@ -1,4 +1,8 @@
+from rnn_lstm_captioning import LSTM, ImageEncoder, WordEmbedding, temporal_softmax_loss, CaptioningRNN
 
+model = ImageEncoder(pretrained=True, verbose=True).to(device=DEVICE)
+
+from a5_helper import train_captioner
 
 reset_seed(0)
 

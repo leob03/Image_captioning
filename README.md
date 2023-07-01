@@ -24,7 +24,7 @@ Models in this exercise are highly similar to very early works in neural-network
 1. [Show and Tell: A Neural Image Caption Generator](https://arxiv.org/abs/1411.4555)
 2. [Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/abs/1502.03044)
 
-This model learns _where_ to look.
+The Attention model learns _where_ to look.
 
 As you generate a caption, word by word, you can see the model's gaze shifting across the image.
 

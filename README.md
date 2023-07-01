@@ -57,7 +57,7 @@ The pipeline for the project looks as follows:
 - In the **prediction stage**, a witheld set of images is passed to RNN and the RNN generates the sentence one word at a time. The code also includes utilities for visualizing the results.
 
 # Dependencies
-**Python 3.10**, modern version of **PyTorch**, **numpy/scipy**, **argparse** module. Most of these are okay to install with **pip**. To install all dependencies at once, run the command `pip install -r requirements.txt`
+**Python 3.10**, modern version of **PyTorch**, **numpy** and **scipy** module. Most of these are okay to install with **pip**. To install all dependencies at once, run the command `pip install -r requirements.txt`
 
 I only tested this code with Ubuntu 20.04, but I tried to make it as generic as possible (e.g. use of **os** module for file system interactions etc. So it might work on Windows and Mac relatively easily.)
 

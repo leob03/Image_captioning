@@ -21,7 +21,7 @@ Implementation of neural network model that can generate natural language captio
 
 In this project, we implemented a vanilla recurrent neural networks (RNNs), [long-short term memory networks (LSTMs)](https://www.researchgate.net/publication/13853244_Long_Short-term_Memory), and [attention-based LSTMs](https://arxiv.org/abs/1409.0473) to train a model that can generate natural language captions for images.
 
-Models in this exercise are highly similar to very early works in neural-network based image captioning. If you are interested to learn more, check out these two papers:
+Models presented are highly similar to very early works in neural-network based image captioning. If you are interested to learn more, check out these two papers:
 
 1. [Show and Tell: A Neural Image Caption Generator](https://arxiv.org/abs/1411.4555)
 2. [Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/abs/1502.03044)
@@ -33,7 +33,6 @@ As you generate a caption, word by word, you can see the model's gaze shifting a
 This is possible because of its _Attention_ mechanism, which allows it to focus on the part of the image most relevant to the word it is going to utter next.
 
 Here is a caption generated example:
-
 
 ---
 
@@ -80,23 +79,23 @@ We have preprocessed the data and saved them into a serialized data file. It con
 
 We used RegNet-X 400MF model to extract features for the images. A few notes on the caption preprocessing:
 
-Dealing with strings is inefficient, so we will work with an encoded version of the captions. Each word is assigned an integer ID, allowing us to represent a caption by a sequence of integers. The mapping between integer IDs and words is saved in an entry named `vocab` (both `idx_to_token` and `token_to_idx`), and we use the function `decode_captions` from `a5_helper.py` to convert tensors of integer IDs back into strings.
+Dealing with strings is inefficient, so we worked with an encoded version of the captions. Each word is assigned an integer ID, allowing us to represent a caption by a sequence of integers. The mapping between integer IDs and words is saved in an entry named `vocab` (both `idx_to_token` and `token_to_idx`), and we used the function `decode_captions` from `utils.py` to convert tensors of integer IDs back into strings.
 
-There are a couple special tokens that we add to the vocabulary. We prepend a special `<START>` token and append an `<END>` token to the beginning and end of each caption respectively. Rare words are replaced with a special `<UNK>` token (for "unknown"). In addition, since we want to train with minibatches containing captions of different lengths, we pad short captions with a special `<NULL>` token after the `<END>` token and don't compute loss or gradient for `<NULL>` tokens. 
+There are a couple special tokens that we added to the vocabulary. We prepended a special `<START>` token and appent an `<END>` token to the beginning and end of each caption respectively. Rare words are replaced with a special `<UNK>` token (for "unknown"). In addition, since we wanted to train with minibatches containing captions of different lengths, we pad short captions with a special `<NULL>` token after the `<END>` token and didn't compute loss or gradient for `<NULL>` tokens. 
 
 ### Image Feature Extraction
 
 The first essential component in an image captioning model is an encoder that inputs an image and produces features for decoding the caption.
-Here, we use a small [RegNetX-400MF](https://pytorch.org/vision/stable/models.html#torchvision.models.regnet_x_400mf) as the backbone so we can train in reasonable time..
+Here, we used a small [RegNetX-400MF](https://pytorch.org/vision/stable/models.html#torchvision.models.regnet_x_400mf) as the backbone so we can train in reasonable time..
 
 It accepts image batches of shape `(B, C, H, W)` and outputs spatial features from final layer that have shape `(B, C, H/32, W/32)`.
-For vanilla RNN and LSTM, we use the average pooled features (shape `(B, C)`) for decoding captions, whereas for attention LSTM we aggregate the spatial features by learning attention weights.
+For vanilla RNN and LSTM, we used the average pooled features (shape `(B, C)`) for decoding captions, whereas for attention LSTM we aggregated the spatial features by learning attention weights.
 Checkout the `ImageEncoder` method in `rnn_lstm_captioning.py` to see the initialization of the model.
 
-We use the implementation from torchvision and put a very thin wrapper module for our use-case.
+We used the implementation from torchvision and put a very thin wrapper module for our use-case.
 
 ### Word embedding
-In deep learning systems, we commonly represent words using vectors. Each word of the vocabulary will be associated with a vector, and these vectors will be learned jointly with the rest of the system.
+In deep learning systems, we commonly represent words using vectors. Each word of the vocabulary is associated with a vector, and these vectors are learned jointly with the rest of the system.
 
 ### Temporal Softmax loss
 
@@ -105,12 +104,12 @@ This score is obtained by applying an affine transform to the hidden state (thin
 We know the ground-truth word at each timestep, so we use a cross-entropy loss at each timestep.
 We sum the losses over time and average them over the minibatch.
 
-However there is one wrinkle: since we operate over minibatches and different captions may have different lengths, we append `<NULL>` tokens to the end of each caption so they all have the same length. We don't want these `<NULL>` tokens to count toward the loss or gradient, so in addition to scores and ground-truth labels our loss function also accepts a `ignore_index` that tells it which index in caption should be ignored when computing the loss.
+However there is one wrinkle: since we operate over minibatches and different captions may have different lengths, we appent `<NULL>` tokens to the end of each caption so they all have the same length. We don't want these `<NULL>` tokens to count toward the loss or gradient, so in addition to scores and ground-truth labels our loss function also accepts a `ignore_index` that tells it which index in caption should be ignored when computing the loss.
 
 ### Captioning Module
 
 Finally we wrapped everything into the captioning module.
-This modoule will have a generic structure for RNN, LST, and attention-based LSTM -- which we control by providing `cell_type` argument (one of `["rnn", "lstm", "attn"]`).
+This module has a generic structure for RNN, LST, and attention-based LSTM -- which we control by providing `cell_type` argument (one of `["rnn", "lstm", "attn"]`).
 
 ### Image Captioning with LSTMs
 
@@ -147,7 +146,7 @@ Attention LSTM essentially adds an attention input $x_{attn}^t\in\mathbb{R}^H$ i
 
 To get the attention input $x_{attn}^t$, here we adopt a method called `scaled dot-product attention`, as covered in the lecture. We first project the CNN feature activation from $\mathbb{R}^{400\times4\times4}$ to $\mathbb{R}^{H\times4\times4}$ using an affine layer. Given the projected activation $A\in \mathbb{R}^{H\times4\times4}$ and the LSTM hidden state from the previous time step $h_{t-1}$, we formuate the attention weights on $A$ at time step $t$ as $M_{attn}^t=h_{t-1}A/\sqrt{H} \in \mathbb{R}^{4\times4}$.
 
-To simplify the formuation here, we flatten the spatial dimensions of $A$ and $M_{attn}^t$ which gives $\tilde{A}\in \mathbb{R}^{H\times16}$ and $\tilde{M^t}_{attn}=h_{t-1}A\in \mathbb{R}^{16}$.
+To simplify the formuation here, we flattened the spatial dimensions of $A$ and $M_{attn}^t$ which gives $\tilde{A}\in \mathbb{R}^{H\times16}$ and $\tilde{M^t}_{attn}=h_{t-1}A\in \mathbb{R}^{16}$.
 We add a **`softmax`** activation function on $\tilde{M^t}_{attn}$ so that the attention weights at each time step are normalized and sum up to one.
 
 The attention embedding given the attention weights is then $x_{attn}^t=\tilde{A}\tilde{M^t}_{attn} \in\mathbb{R}^H$.

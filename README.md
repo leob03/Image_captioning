@@ -1,6 +1,8 @@
 # Neural Image Caption Generation with Visual Attention
 Implementation of neural network model that can generate natural language captions for images. Three different architectures are proposed and compared: first one uses vanilla recurrent neural networks (RNNs), second one long-short term memory networks (LSTMs), and third one attention-based LSTMs. 
 
+&nbsp;
+
 <div style="display: flex; flex-direction: row;">
   <img src="gif/1294.gif" alt="GIF 1" width="240" height="200">
   <img src="gif/13936.gif" alt="GIF 2" width="240" height="200">

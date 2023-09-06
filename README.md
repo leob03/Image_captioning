@@ -156,14 +156,18 @@ Attention LSTM essentially adds an attention input $x_{attn}^t\in\mathbb{R}^H$ i
 
 To get the attention input $x_{attn}^t$, here we adopt a method called `scaled dot-product attention`, as covered in the lecture. We first project the CNN feature activation from $\mathbb{R}^{400\times4\times4}$ to $\mathbb{R}^{H\times4\times4}$ using an affine layer. Given the projected activation $A\in \mathbb{R}^{H\times4\times4}$ and the LSTM hidden state from the previous time step $h_{t-1}$, we formuate the attention weights on $A$ at time step $t$ as $M_{attn}^t=h_{t-1}A/\sqrt{H} \in \mathbb{R}^{4\times4}$.
 
-To simplify the formuation here, we flattened the spatial dimensions of $A$ and $M_{attn}^t$ which gives $\tilde{A}\in \mathbb{R}^{H\times16}$ and $\tilde{M^t}_{attn}=h_{t-1}A\in \mathbb{R}^{16}$.
-We add a **`softmax`** activation function on $\tilde{M^t}_{attn}$ so that the attention weights at each time step are normalized and sum up to one.
+To simplify the formulation here, we flattened the spatial dimensions of $A$ and $M_{attn}^t$, which gives $\tilde{A} \in \mathbb{R}^{H \times 16}$ and $\tilde{M_{attn}^t} = h_{t-1}A \in \mathbb{R}^{16}$.
+We add a **softmax** activation function on $\tilde{M_{attn}^t}$ so that the attention weights at each time step are normalized and sum up to one.
 
 The attention embedding given the attention weights is then $x_{attn}^t=\tilde{A}\tilde{M^t}_{attn} \in\mathbb{R}^H$.
 
 * **Scaled dot-product attention**.
-Given the LSTM hidden state from the previous time step `prev_h` (or $h_{t-1}$) and the projected CNN feature activation `A`, the attention weights `attn_weights` (or $\tilde{M^t}_{attn}$ with a reshaping to $\mathbb{R}^{4\times4}$) attention embedding output `attn` (or $x_{attn}^t$) is computed using the formulation we provided.
+Given the LSTM hidden state from the previous time step `prev_h` (or $h_{t-1}$) and the projected CNN feature activation `A`, the attention weights `attn_weights` (or $\tilde{M_{attn}^t}$ with a reshaping to $\mathbb{R}^{4 \times 4}$) attention embedding output `attn` (or $x_{attn}^t$) is computed using the formulation we provided.
+
 
 Hence, at each timestep the *activation vector* $a\in\mathbb{R}^{4H}$ in LSTM cell is formulated as:
 
 $a=W_xx_t + W_hh_{t-1}+W_{attn}x_{attn}^t+b$.
+
+
+
